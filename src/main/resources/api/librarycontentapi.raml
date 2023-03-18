@@ -1,0 +1,117 @@
+#%RAML 1.0
+title: LibraryContentAPI
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        type: string
+        description: client Id provided by API Manager
+        required: true
+      client_secret:
+        type: string
+        required: true
+        description: The Client secret key provided by the API Manager
+/library:
+  /books:
+    get:
+      is:
+        - client-id-required
+      description: Get All the books in library
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                [
+                  {
+                    "title": "My First Book",
+                    "description": "This is my first book",
+                    "price": 30,
+                    "total_quantity": 10,
+                    "available_quantity": 10
+                  }
+                ]
+    post:
+      is:
+        - client-id-required      
+      description: Adds new book to the library
+      body:
+        application/json:
+          example: |
+            {
+              "title": "My First Book",
+              "description": "This is my first book",
+              "price": 30,
+              "total_quantity": 10,
+              "available_quantity": 10
+            }
+      responses:
+        201:
+          description: Book resource created response.
+          headers:
+               X-BookId:
+                 description: New Book Id
+                 type: number
+    put:
+      is:
+        - client-id-required      
+      description: update book to the library
+      body:
+        application/json:
+          example: |
+            {
+              "book_id": 1,
+              "title": "My First Book",
+              "description": "This is my first book",
+              "price": 30,
+              "total_quantity": 10,
+              "available_quantity": 10
+            }
+      responses:
+        200:
+          description: Book resource updated .
+    patch:
+      is:
+        - client-id-required      
+      description: update book to the library
+      body:
+        application/json:
+      responses:
+        200:
+          description: Book resource updated . 
+          body:
+            application/json:
+              example: |
+                {
+                  "book_id": 1,
+                  "title": "My First Book",
+                  "description": "This is my first book",
+                  "price": 30,
+                  "total_quantity": 10,
+                  "available_quantity": 10
+                }                
+    /{bookId}:
+      get:
+        is:
+        - client-id-required      
+        description: Gets single Book details
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    "title": "My First Book",
+                    "description": "This is my first book",
+                    "price": 30,
+                    "total_quantity": 10,
+                    "available_quantity": 10
+                  }
+          404:
+            description: Book Not found
+      delete:
+        is:
+        - client-id-required
+        responses:
+          200:            
+            description: Book record deleted

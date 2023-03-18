@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="getflow" doc:id="09a9f79b-bd0d-43cc-9b95-c65e64346c05" >
+	        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    title: "My First Book",
+    description: "This is my first book",
+    price: 30,
+    total_quantity: 10,
+    available_quantity: 10
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<db:select doc:name="Select" doc:id="7727a32c-13c1-439c-b171-2d6042f14942" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from books]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="193126ca-b749-4d96-8c0e-eae11e9aa02d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	
+</flow>
+	<flow name="deleteBooksFlow" doc:id="3f687028-acab-430e-b545-d252c6dc6f10" >
+		<db:delete doc:name="Delete" doc:id="87a03529-06e1-4b73-9570-8dbb05f8c7d6" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from books where book_id = :book_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{book_id : vars.bookId}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="6c80ac6a-68c2-47c4-a6fe-e6dccf8241d0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"success" : "record deleted succefully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getflowbybookid" doc:id="08d67c67-ff88-456c-aa9e-24e2c866de7e" >
+	        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="bookId">attributes.uriParams.'bookId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<db:select doc:name="Select" doc:id="d082f5a9-2795-4995-8317-9d483335aef6" config-ref="Database_Config">
+			<db:sql><![CDATA[Select * from books where book_id = :book_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{book_id : vars.bookId}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="5c1b872b-72e0-47b7-bd77-2c765183ecfa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	
+</flow>
+	
+	</mule>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	
+
+	<flow name="postflow" doc:id="5091d99f-5619-4a91-bafb-f1725bae8de8" >
+		<ee:transform doc:name="Transform Message" doc:id="9f946e42-b98e-452c-a19b-47f5d8b2174c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	available_quantity: payload.available_quantity,
+	create_timestamp: now() ,
+	price: payload.price,
+	description: payload.description,
+	total_quantity: payload.total_quantity,
+	title: payload.title
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert" doc:id="6af80cc1-8f2c-4f1f-8e8f-23d651d67d4b" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO books(title, description, price, total_quantity, available_quantity, create_timestamp) VALUES (:title, :description, :price, :total_quantity, :available_quantity, :create_timestamp) ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="46695570-c8d0-4b07-8234-8b022eef4d94" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="d81c74e1-b42c-44de-a420-bb119781cc56" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	success: "createt suucesfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="putbooksFlow" doc:id="0ccd10a8-217d-4cec-878e-725f97b2e774" >
+		<ee:transform doc:name="Transform Message" doc:id="0f0edaa0-4029-443d-a945-924c954fcc1a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	available_quantity: payload.available_quantity,
+	create_timestamp: now(),
+	price: payload.price,
+	description: payload.description,
+	total_quantity: payload.total_quantity,
+	book_id: payload.book_id,
+	title: payload.title
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="17ebbf08-87e1-4da6-a6f9-03e97c73b494" variableName="originalPayload"/>
+		<db:update doc:name="Update" doc:id="56604954-0bd8-48b4-a271-3b90e9741027" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE books SET book_id = :book_id, title = :title, description = :description, price = :price, total_quantity = :total_quantity, available_quantity = :available_quantity, create_timestamp = :create_timestamp WHERE book_id = :book_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message2" doc:id="c6c7ea59-77a9-4859-ae80-1e6e3bd3e1fb">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="16caf75c-1ff5-4bf0-99d2-ccd407cfb25f" >
+			<when expression="#[payload.affectedRows == 0]">
+				<set-payload value="#[vars.originalPayload]" doc:name="Set Payload" doc:id="812cd9e7-3fb9-4b54-a9c8-4e9955b12443" />
+				<flow-ref doc:name="Flow Reference" doc:id="50c09a90-f984-4e40-a122-f0fc7029205a" name="postflow"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="0abda87c-771d-4208-b68b-2058016bcfeb" message="#[payload]" />
+				<ee:transform doc:name="Transform Message1" doc:id="d6a71505-2461-45b4-a113-89ee4c49c89a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	success: "updated suucesfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="72d421fe-1576-4824-92ef-9175a82a8986" type="ANY">
+				<logger level="INFO" doc:name="Logger" doc:id="95a68149-3e44-4f34-857b-87291b8a8405" message='"put operation failed"'/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="patchbooksFlow" doc:id="f12e450e-b091-4366-87e8-412d1e9daa56" >
+		<ee:transform doc:name="Transform Message" doc:id="202c253a-13c0-4e92-8e87-f7635001aaf7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	available_quantity: payload.available_quantity,
+	create_timestamp: now(),
+	price: payload.price,
+	description: payload.description,
+	total_quantity: payload.total_quantity,
+	book_id: payload.book_id,
+	title: payload.title
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:update doc:name="Update" doc:id="aa924e7e-8f05-40ed-a96b-e0cceb411a37" config-ref="Database_Config" >
+			<db:sql ><![CDATA[UPDATE books SET  title = :title, description = :description, price = :price, total_quantity = :total_quantity, available_quantity = :available_quantity, create_timestamp = :create_timestamp WHERE book_id = :book_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="Logger" doc:id="57c9b9c2-d43d-4b61-99d8-bf739fa1ee39" message="#[payload]" />
+		<choice doc:name="Choice" doc:id="9f32a7f4-3e11-4b5a-b791-2c81c576be03">
+			<when expression="#[payload.affectedRows == 0]">
+				<ee:transform doc:name="Transform Message" doc:id="df5f45ef-98f5-4bc4-804a-362b59126150" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Error: "no record found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message1" doc:id="e86098e6-4a3b-40b3-b535-ce1e037c429b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	success: "updated suucesfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	
+</mule>
