@@ -1,0 +1,254 @@
+{
+	"info": {
+		"_postman_id": "51a469c4-3490-4ef1-bf62-ae7d4fc459f4",
+		"name": "apibuild",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://library.us-e2.cloudhub.io/api/library/books/1",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Avyan123@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "priyanka15884",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "af087d9f6f6741eab5eb8b517d21d7e0",
+						"type": "default"
+					},
+					{
+						"key": "client_secret",
+						"value": "Fe0C285761684eeB9B590A9ecc9224F6",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://library.us-e2.cloudhub.io/api/library/books/1",
+					"protocol": "http",
+					"host": [
+						"library",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"library",
+						"books",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://library.us-e2.cloudhub.io/api/library/books",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Avyan123@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "priyanka15884",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "af087d9f6f6741eab5eb8b517d21d7e0",
+						"type": "default"
+					},
+					{
+						"key": "client_secret",
+						"value": "Fe0C285761684eeB9B590A9ecc9224F6",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://library.us-e2.cloudhub.io/api/library/books",
+					"protocol": "http",
+					"host": [
+						"library",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"library",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://library.us-e2.cloudhub.io/api/library/books",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Avyan123@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "priyanka15884",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "af087d9f6f6741eab5eb8b517d21d7e0",
+						"type": "default"
+					},
+					{
+						"key": "client_secret",
+						"value": "Fe0C285761684eeB9B590A9ecc9224F6",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n              \"title\": \"My put operation Book\",\r\n              \"description\": \"This is my first book\",\r\n              \"price\": 30,\r\n              \"total_quantity\": 10,\r\n              \"available_quantity\": 10,\r\n              \"book_id\": 10\r\n            }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://library.us-e2.cloudhub.io/api/library/books",
+					"protocol": "http",
+					"host": [
+						"library",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"library",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://avyaneng-lights.us-e2.cloudhub.io/api/unitedflights?destination=sf4",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "c85dde746768457dac06adc48f2dc87e",
+						"type": "default"
+					},
+					{
+						"key": "client_secret",
+						"value": "03937e36D88b4e5b9C0b37419C9Cda22",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://avyaneng-lights.us-e2.cloudhub.io/api/unitedflights?destination=sf4",
+					"protocol": "http",
+					"host": [
+						"avyaneng-lights",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"unitedflights"
+					],
+					"query": [
+						{
+							"key": "destination",
+							"value": "sf4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8082/api/hello",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/hello",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"hello"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
